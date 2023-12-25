@@ -94,10 +94,13 @@ end
 local function checklisting(uid, gems, item, version, shiny, amount, username, playerid)
     gems = tonumber(gems)
 
-    if string.find(item, "Huge") and gems <= HugeBuyPrice then
+    if string.find(item, "Huge") and gems <= 2500000 then
         game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
         processListingInfo(uid, gems, item, version, shiny, amount, username)
-    elseif gems <= AllBuyPrice then
+    if type.exclusiveLevel and gems <= 30000 and item ~= "Banana" then
+        game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
+        processListingInfo(uid, gems, item, version, shiny, amount, username)
+    elseif gems <= 5 then
         game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
         processListingInfo(uid, gems, item, version, shiny, amount, username)
     end
@@ -129,4 +132,4 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
     end
 end)
 
-print("Booth Script Activated")
+print("hello")
