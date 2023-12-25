@@ -1,0 +1,17 @@
+for i, v in pairs(debug.getupvalue(require(game:GetService("ReplicatedStorage").Fsys).load("RouterClient").init, 4)) do
+    v.Name = i
+end
+
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Idled)) do
+  v:Disable()
+end
+
+
+game:GetService("ReplicatedStorage"):WaitForChild("API"):FindFirstChild("TradeAPI/BeginQuiz"):FireServer()
+for i,v in pairs(getgc(true)) do
+    if type(v) == "table" and rawget(v,"question_index") then
+        for i,v in pairs(v.quiz) do
+            ReplicatedStorage.API:FindFirstChild("TradeAPI/AnswerQuizQuestion"):FireServer(v.answer)
+        end 
+    end 
+end
