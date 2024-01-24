@@ -1,0 +1,114 @@
+repeat task.wait() until game:IsLoaded()
+
+while not game:GetService("Players").LocalPlayer.PlayerGui.MainLeft.Enabled do
+    task.wait(1)
+end
+
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+    game:GetService("VirtualUser"):CaptureController()
+    game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+end)
+
+
+--Variables
+local rep = game:GetService("ReplicatedStorage")
+local Things = workspace:FindFirstChild("__THINGS")
+--local chestfolder = workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveChests
+local HRPFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+local Player = game.Players.LocalPlayer
+local orbs = Things.Orbs
+local Lootbags = Things.Lootbags
+
+function CheckExist(cords)
+    task.wait(15)
+    local chestfolder = workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveBlocks
+    for i, v in pairs(chestfolder:GetChildren()) do
+        if v:GetAttribute("Coord") == cords then
+            print("Found at:", cords)
+            return true
+        end
+    end
+    for _, animatedChest in pairs(chestfolder:GetChildren()) do
+    local chestCoords = animatedChest:GetAttribute("Coord")
+    y = chestCoords.y
+
+    if y == 1 then
+        
+        while CheckExist(chestCoords) and wait() do
+            task.wait(3)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = animatedChest.CFrame
+
+            local chestCoords = animatedChest:GetAttribute("Coord")
+            --print(chestCoords)
+    end
+end
+end
+end
+
+
+local function ChestFarmy()
+    task.wait(15)
+    task.spawn(CheckExist)
+    while task.wait() do
+    for i,v in pairs(workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveBlocks:GetChildren()) do
+        if v.Name == "Part" and (v.Position and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Position).magnitude < 15) then
+        for i = 1, 5 do
+        local args1 = {
+            [1] = "AdvancedDigsite",
+            [2] = "DigBlock",
+            [3] = v:GetAttribute('Coord')
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Instancing_FireCustomFromClient"):FireServer(unpack(args1))
+        end
+        task.wait(0.1)
+        break
+        end
+    end
+end   
+        while task.wait() do
+            for i,v in pairs(workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveChests:GetChildren()) do
+            if v.Name == "Part" and (v.Position and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Position).magnitude < 20) then
+            local args = {
+                [1] = "AdvancedDigsite",
+                [2] = "DigChest",
+                [3] = v:GetAttribute('Coord')
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Instancing_FireCustomFromClient"):FireServer(unpack(args))
+            break
+            end
+            end
+            end
+end
+
+local function EnterDig()
+    task.wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.__THINGS.Instances.AdvancedDigsite.Teleports.Enter.CFrame
+    print("Entered Advanced Digsite")
+    task.spawn(ChestFarmy)
+end
+
+local function ClaimBucket()
+    --WIP
+end
+
+
+
+task.spawn(EnterDig)
+
+orbs.ChildAdded:Connect(function(orb)
+    if Player.Character.HumanoidRootPart == nil then return end
+    orb:PivotTo(Player.Character.HumanoidRootPart.CFrame)
+    Network:WaitForChild("Orbs: Collect"):FireServer({orb.Name})
+    task.wait(1.5)
+    orb:Destroy()
+end)
+
+Lootbags.ChildAdded:Connect(function(lootbag)
+    if Player.Character.HumanoidRootPart == nil then return end
+    lootbag:PivotTo(Player.Character.HumanoidRootPart.CFrame)
+    Network:WaitForChild("Lootbags_Claim"):FireServer({lootbag.Name})
+    task.wait(1.5)
+    lootbag:Destroy()
+end)
