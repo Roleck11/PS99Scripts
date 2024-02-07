@@ -180,6 +180,8 @@ spawn(function()
 end)
 
 function autoFishA()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-180.852783203125, 117.92350006103516, 5175.45703125)
+
     while task.wait() and Config.autoFishA do
         local x = math.random(10, 20)
         local z = math.random(10, 20)
@@ -191,7 +193,7 @@ function autoFishA()
         }
 
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(argsCast))
-        task.wait(3.5)
+        task.wait(2.5)
 
         local argsReel = {
             [1] = "AdvancedFishing",
