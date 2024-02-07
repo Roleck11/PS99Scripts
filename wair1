@@ -7,6 +7,7 @@ end
 getgenv().Config = {}
 
 local Lib = require(game.ReplicatedStorage.Library.Client)
+local Library = require(game.ReplicatedStorage.Library.Client)
 
 function CollectPresent(Id)
     return Lib.Network.Invoke("Hidden Presents: Found", Id)
