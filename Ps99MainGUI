@@ -7,6 +7,11 @@ end
 getgenv().Config = {}
 
 local Lib = require(game.ReplicatedStorage.Library.Client)
+local Library = require(game:GetService("ReplicatedStorage").Library)
+
+local Network = Library.Network
+local Balancing = Library.Balancing
+local Zones = Library.Directory.Zones
 
 function CollectPresent(Id)
     return Lib.Network.Invoke("Hidden Presents: Found", Id)
@@ -27,8 +32,14 @@ function GetPresents()
     end
 end
 
+spawn(function()
+    while task.wait(1) do
+        GetPresents()
+    end    
+end)
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Open shitty source  Pet99 Hub", HidePremium = false, SaveConfig = false, ConfigFolder = "OrionTest"})
+local Window = OrionLib:MakeWindow({Name = "Roleck Ps99 Hub", HidePremium = false, SaveConfig = false, ConfigFolder = "OrionTest", IntroEnabled = false})
 
 local Tab =
     Window:MakeTab(
@@ -125,24 +136,6 @@ Tab:AddTextbox(
 
 Tab:AddButton(
     {
-        Name = "AntiAFK Jump",
-        Callback = function()
-            antiAFK()
-        end
-    }
-)
-
-Tab:AddButton(
-    {
-        Name = "AntiAFK Normal",
-        Callback = function()
-            antiAFKN()
-        end
-    }
-)
-
-Tab:AddButton(
-    {
         Name = "Disable 3D Render",
         Callback = function()
             game:GetService("RunService"):Set3dRenderingEnabled(false)
@@ -180,6 +173,11 @@ function antiAFKN()
             vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
         end)
 end
+
+spawn(function()
+    antiAFK()
+    antiAFKN()    
+end)
 
 function autoFishA()
     while task.wait() and Config.autoFishA do
@@ -292,26 +290,16 @@ function autoMail()
 end
 
 function Automap()
-    print("Automap exe-----------")
-    while task.wait() and Config.Automap do 
-        Options.Automap:SetValue(false)
-        game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
-        wait(.1)
-        game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
-    end
-    while true do wait()
+    print("Auto Map Enabled")
+    while Config.Automap do wait()
         local Zone, Zone_Info = Library["ZoneCmds"].GetMaxOwnedZone()
-        print("Zone:", Zone, Zone_Info)
         local zone, info = Library["ZoneCmds"].GetNextZone()
-        print(zone, info)
         if zone and info then
-            print("inside balance check")
             if Balancing.CalcGatePrice(info) <= Library["CurrencyCmds"].Get("Coins") then
                 Network.Invoke("Zones_RequestPurchase", info.ZoneName)
             end
         end
         if Library["MapCmds"].GetCurrentZone() ~= Zone_Info._id or not Library["MapCmds"].IsInDottedBox() then
-            print("inside 2nd lib")
             if Zone_Info.ZoneFolder:FindFirstChild("INTERACT") then
                 local Max, BreakZone;
                 for i,v in pairs(Zone_Info.ZoneFolder.INTERACT.BREAK_ZONES:GetChildren()) do
@@ -331,12 +319,6 @@ function Automap()
     end
 end
 wait(.1)
-
-local Library = require(game:GetService("ReplicatedStorage").Library)
-
-local Network = Library.Network
-local Balancing = Library.Balancing
-local Zones = Library.Directory.Zones
 
 Library.PlayerPet.CalculateSpeedMultiplier = function(...)
     return 999999999
