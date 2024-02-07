@@ -193,7 +193,7 @@ function autoFishA()
         }
 
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(argsCast))
-        task.wait(2.5)
+        task.wait(3.5)
 
         local argsReel = {
             [1] = "AdvancedFishing",
