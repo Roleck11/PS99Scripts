@@ -62,8 +62,8 @@ Tab:AddToggle(
         Name = "Auto Map",
         Default = false,
         Callback = function(m)
-            Config.automap = m
-            spawn(automap)
+            Config.Automap = m
+            spawn(Automap)
         end
     }
 )
@@ -292,8 +292,8 @@ function autoMail()
 end
 
 function Automap()
-    print("automap exe-----------")
-    while task.wait() and Config.automap do 
+    print("Automap exe-----------")
+    while task.wait() and Config.Automap do 
         Options.Automap:SetValue(false)
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
         wait(.1)
