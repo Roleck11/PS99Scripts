@@ -292,6 +292,7 @@ function autoMail()
 end
 
 function Automap()
+    print("automap exe-----------")
     while task.wait() and Config.automap do 
         Options.Automap:SetValue(false)
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
@@ -299,32 +300,34 @@ function Automap()
         game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
     end
     while true do wait()
-        pcall(function()
-            local Zone, Zone_Info = Library["ZoneCmds"].GetMaxOwnedZone()
-            local zone, info = Library["ZoneCmds"].GetNextZone()
-            if zone and info then
-                if Balancing.CalcGatePrice(info) <= Library["CurrencyCmds"].Get("Coins") then
-                    Network.Invoke("Zones_RequestPurchase", info.ZoneName)
-                end
+        local Zone, Zone_Info = Library["ZoneCmds"].GetMaxOwnedZone()
+        print("Zone:", Zone, Zone_Info)
+        local zone, info = Library["ZoneCmds"].GetNextZone()
+        print(zone, info)
+        if zone and info then
+            print("inside balance check")
+            if Balancing.CalcGatePrice(info) <= Library["CurrencyCmds"].Get("Coins") then
+                Network.Invoke("Zones_RequestPurchase", info.ZoneName)
             end
-            if Library["MapCmds"].GetCurrentZone() ~= Zone_Info._id or not Library["MapCmds"].IsInDottedBox() then
-                if Zone_Info.ZoneFolder:FindFirstChild("INTERACT") then
-                    local Max, BreakZone;
-                    for i,v in pairs(Zone_Info.ZoneFolder.INTERACT.BREAK_ZONES:GetChildren()) do
-                        if not Max then Max = v.Size.X * v.Size.Y * v.Size.Z; end
-                        if not BreakZone then BreakZone = v end
-                    
-                        if Max < v.Size.X * v.Size.Y * v.Size.Z then
-                            BreakZone = v
-                        end
+        end
+        if Library["MapCmds"].GetCurrentZone() ~= Zone_Info._id or not Library["MapCmds"].IsInDottedBox() then
+            print("inside 2nd lib")
+            if Zone_Info.ZoneFolder:FindFirstChild("INTERACT") then
+                local Max, BreakZone;
+                for i,v in pairs(Zone_Info.ZoneFolder.INTERACT.BREAK_ZONES:GetChildren()) do
+                    if not Max then Max = v.Size.X * v.Size.Y * v.Size.Z; end
+                    if not BreakZone then BreakZone = v end
+                
+                    if Max < v.Size.X * v.Size.Y * v.Size.Z then
+                        BreakZone = v
                     end
-    
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = BreakZone.CFrame * CFrame.new(0, 10, 0)
-                else
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Zone_Info.ZoneFolder.PERSISTENT.Teleport.CFrame
                 end
+
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = BreakZone.CFrame * CFrame.new(0, 10, 0)
+            else
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Zone_Info.ZoneFolder.PERSISTENT.Teleport.CFrame
             end
-        end)
+        end
     end
 end
 wait(.1)
