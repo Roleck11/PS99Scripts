@@ -226,7 +226,7 @@ function autoFishA()
             game:GetService("ReplicatedStorage").Network.Instancing_InvokeCustomFromClient:InvokeServer(
                 unpack(argsClicked)
             )
-        until not hasFishingLine or Config.autoFishA
+        until not hasFishingLine or Config.autoFishA == false
         task.wait()
     end
 end
